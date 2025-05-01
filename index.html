@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EcoSpark: Carbon Footprint Quiz for Kids</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="MusologinSVG.svg"" type="image/svg+xml">
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header class="header">
+    <div class="container header-container">
+      <h1 class="header-title">
+        <img src="MusologinSVG.svg" alt="MuSo Logo" class="logo">
+        Carbon Footprint Quiz at MuSo
+      </h1>
+      
+      <div class="score-container">
+        <span>Score:</span>
+        <span id="score-display" class="score-badge">0</span>
+      </div>
+    </div>
+    <!-- Button to open the form (if not already visible) -->
+  <button id="postQuestionBtn" style="font-weight: bold;" class="question-btn">Post a Question</button>
+
+  <!-- Quiz Question Form Container -->
+  <div id="questionFormContainer" class="form-container" style="display: none;">
+<form id="questionForm">
+  <h2>Quiz Question Submission</h2>
+  
+  <div class="form-header">
+    <button type="button" id="hideFormBtn" class="hide-form-btn">Go Back</button>
+  </div>
+  
+  <div class="form-group">
+    <label for="nameInput">Your Name</label>
+    <input type="text" id="nameInput" name="name" placeholder="Enter your name" required>
+  </div>
+  
+  <div class="form-group">
+    <label for="categorySelect">Question Category</label>
+    <select id="categorySelect" name="category" required>
+      <!-- Options will be populated by JavaScript -->
+    </select>
+  </div>
+  
+  <div class="form-group">
+    <label for="questionInput">Quiz Question</label>
+    <textarea id="questionInput" name="question" placeholder="Enter your quiz question" required></textarea>
+  </div>
+  
+  <div class="form-buttons">
+    <button type="button" id="cancelBtn" class="cancel-btn">Cancel</button>
+    <button type="submit" class="submit-btn">Submit Question</button>
+  </div>
+</form>
+    </div>
+  </header>
+
+  <main class="main">
+    <div class="container quiz-container">
+      <!-- Loading State -->
+      <div id="loading-container" class="loading-container">
+        <div class="loader"></div>
+        <p class="loading-text">Loading eco-friendly questions...</p>
+      </div>
+
+      <!-- Quiz Card -->
+      <div id="quiz-card" class="card quiz-card hidden">
+        <div class="card-header">
+          <div class="question-meta">
+            <span id="question-number" class="question-number">Question 1/10</span>
+            <span id="question-emoji" class="question-emoji">🌍</span>
+          </div>
+          <h2 id="item-title" class="item-title">Item Name</h2>
+          <p id="carbon-footprint" class="carbon-footprint">Carbon Footprint: 0 kg CO₂e</p>
+        </div>
+
+        <div class="card-content">
+          <h3 id="question-text" class="question-text">Question text goes here?</h3>
+
+          <div id="choices-container" class="choices-container">
+            <!-- Choices will be inserted here by JavaScript -->
+          </div>
+        </div>
+
+        <div id="feedback-container" class="card-footer hidden">
+          <div id="feedback-box" class="feedback-box">
+            <p id="feedback-title" class="feedback-title">Correct! 🎉</p>
+            <p id="correct-answer" class="correct-answer hidden">The correct answer is: Answer</p>
+            <p class="bonus-fact">
+              <span class="font-bold">Bonus fact:</span> <span id="bonus-fact-text"></span>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Result Screen -->
+      <div id="result-screen" class="card result-card hidden">
+        <div class="result-header">
+          <div class="trophy-container">
+            <div class="trophy-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="trophy">
+                <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+                <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+                <path d="M4 22h16"></path>
+                <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path>
+                <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path>
+                <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+              </svg>
+            </div>
+          </div>
+          <h2 class="result-title">Quiz Complete!</h2>
+        </div>
+
+        <div class="result-content">
+          <div id="result-emoji" class="result-emoji">🏆</div>
+          <h3 id="result-message" class="result-message">Eco Champion! You're a planet protector!</h3>
+
+          <div class="progress-container">
+            <div id="progress-bar" class="progress-bar"></div>
+          </div>
+
+          <p id="result-score" class="result-score">Your Score: 0/10 (0%)</p>
+
+          <div class="result-info">
+            <p>Every small action counts! By making eco-friendly choices, you're helping to reduce carbon emissions and protect our planet for future generations.</p>
+            <p class="result-tip">Play again to discover 10 new eco facts from our collection questions!</p>
+          </div>
+        </div>
+
+        <div class="result-footer">
+          <button id="restart-button" class="button restart-button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="refresh-icon">
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+              <path d="M3 3v5h5"></path>
+            </svg>
+            Play Again with New Questions
+          </button>
+        </div>
+
+    </div>
+  </main>
+
+  <script src="script.js"></script>
+  <script src="quiz-data.js"></script>
+</body>
+</html>
