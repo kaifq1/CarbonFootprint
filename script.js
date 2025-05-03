@@ -805,29 +805,29 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  // ✅ Corrected form submission handler
+  // Form submission handler
   questionForm?.addEventListener('submit', function (e) {
     e.preventDefault();
 
-  const submitBtn = document.querySelector('.submit-btn') || document.querySelector('button[type="submit"]');
-  const originalBtnText = submitBtn.textContent;
-  submitBtn.textContent = 'Submitting...';
-  submitBtn.disabled = true;
+    const submitBtn = document.querySelector('.submit-btn') || document.querySelector('button[type="submit"]');
+    const originalBtnText = submitBtn.textContent;
+    submitBtn.textContent = 'Submitting...';
+    submitBtn.disabled = true;
 
-  const questionData = {
-    name: document.getElementById('nameInput')?.value || '',
-    category: document.getElementById('categorySelect')?.value || '',
-    question: document.getElementById('questionInput')?.value || '',
-    timestamp: new Date().toISOString()
-  };
+    const questionData = {
+      name: document.getElementById('nameInput')?.value || '',
+      category: document.getElementById('categorySelect')?.value || '',
+      question: document.getElementById('questionInput')?.value || '',
+      age: document.getElementById('ageInput')?.value || '', // New age field
+      timestamp: new Date().toISOString()
+    };
       
+    // Validate form data
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbyvjHv6inOsDETRvoL-G3dAqQ8DZxbwq8XdyutvGaTNUUjV6_JZsPXcydM2QMX7FWE2Mg/exec'; // Replace with your Web app URL
+    const encodedData = new URLSearchParams();
+    encodedData.append('data', JSON.stringify(questionData));
 
-  // Validate form data
-  const scriptURL = 'https://script.google.com/macros/s/AKfycby0jsF8HwZ7s_taH_jzDT7lNx6bq4HYjxT2u4VuTzNpH-QqaGfo_H1fucu60j_FBh-R/exec'; // Replace with your Web app URL
-  const encodedData = new URLSearchParams();
-  encodedData.append('data', JSON.stringify(questionData));
-
-  fetch(scriptURL, {
+    fetch(scriptURL, {
       method: 'POST',
       body: encodedData,
       headers: {
@@ -839,25 +839,24 @@ document.addEventListener('DOMContentLoaded', function () {
         if (data.result === 'success') {
           alert('Your question has been submitted successfully!');
         
+          // Immediately add question to quiz
+          quizData.push({
+            item: `${questionData.category} Question by ${questionData.name}`,
+            co2e_kg: 0.5,
+            question: questionData.question,
+            choices: ["Option A", "Option B", "Option C", "Option D"], // Placeholder
+            answer: "Option A", // Placeholder
+            bonus_fact: `Submitted by ${questionData.name}`
+          });
 
-        // Immediately add question to quiz
-        quizData.push({
-          item: `${questionData.category} Question by ${questionData.name}`,
-          co2e_kg: 0.5,
-          question: questionData.question,
-          choices: ["Option A", "Option B", "Option C", "Option D"], // Placeholder
-          answer: "Option A", // Placeholder
-          bonus_fact: `Submitted by ${questionData.name}`
-        });
-
-        shuffleQuestions(); // Refresh the quiz question
-        questionForm.reset();
-        questionFormContainer.style.display = 'none';
-        postQuestionBtn.style.display = 'block';
-      } else {
-        throw new Error(data.message);
-      }
-    })
+          shuffleQuestions(); // Refresh the quiz question
+          questionForm.reset();
+          questionFormContainer.style.display = 'none';
+          postQuestionBtn.style.display = 'block';
+        } else {
+          throw new Error(data.message);
+        }
+      })
       .catch(error => {
         console.error('Error:', error);
         alert('Your question has been submitted successfully!');
@@ -868,4 +867,4 @@ document.addEventListener('DOMContentLoaded', function () {
         window.location.reload(); // Refresh the page after alert
       });
   });
-}); // ✅ CLOSES the DOMContentLoaded function
+});
