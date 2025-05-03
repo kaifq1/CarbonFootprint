@@ -23,39 +23,44 @@
       </div>
     </div>
     <!-- Button to open the form (if not already visible) -->
-  <button id="postQuestionBtn" style="font-weight: bold;" class="question-btn">Post a Question</button>
+    <button id="postQuestionBtn" style="font-weight: bold;" class="question-btn">Post a Question</button>
 
-  <!-- Quiz Question Form Container -->
-  <div id="questionFormContainer" class="form-container" style="display: none;">
-<form id="questionForm">
-  <h2>Quiz Question Submission</h2>
-  
-  <div class="form-header">
-    <button type="button" id="hideFormBtn" class="hide-form-btn">Go Back</button>
-  </div>
-  
-  <div class="form-group">
-    <label for="nameInput">Your Name</label>
-    <input type="text" id="nameInput" name="name" placeholder="Enter your name" required>
-  </div>
-  
-  <div class="form-group">
-    <label for="categorySelect">Question Category</label>
-    <select id="categorySelect" name="category" required>
-      <!-- Options will be populated by JavaScript -->
-    </select>
-  </div>
-  
-  <div class="form-group">
-    <label for="questionInput">Quiz Question</label>
-    <textarea id="questionInput" name="question" placeholder="Enter your quiz question" required></textarea>
-  </div>
-  
-  <div class="form-buttons">
-    <button type="button" id="cancelBtn" class="cancel-btn">Cancel</button>
-    <button type="submit" class="submit-btn">Submit Question</button>
-  </div>
-</form>
+    <!-- Quiz Question Form Container -->
+    <div id="questionFormContainer" class="form-container" style="display: none;">
+      <form id="questionForm">
+        <h2>Quiz Question Submission</h2>
+        
+        <div class="form-header">
+          <button type="button" id="hideFormBtn" class="hide-form-btn">Go Back</button>
+        </div>
+        
+        <div class="form-group">
+          <label for="nameInput">Your Name</label>
+          <input type="text" id="nameInput" name="name" placeholder="Enter your name" required>
+        </div>
+    
+        <div class="form-group">
+          <label for="ageInput">Your Age</label>
+          <input type="number" id="ageInput" name="age" placeholder="Enter your age" min="1" max="120" required>
+        </div>
+    
+        <div class="form-group">
+          <label for="categorySelect">Question Category</label>
+          <select id="categorySelect" name="category" required>
+            <!-- Options will be populated by JavaScript -->
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="questionInput">Quiz Question</label>
+          <textarea id="questionInput" name="question" placeholder="Enter your quiz question" required></textarea>
+        </div>
+        
+        <div class="form-buttons">
+          <button type="button" id="cancelBtn" class="cancel-btn">Cancel</button>
+          <button type="submit" class="submit-btn">Submit Question</button>
+        </div>
+      </form>
     </div>
   </header>
 
@@ -148,3 +153,4 @@
   <script src="quiz-data.js"></script>
 </body>
 </html>
+
