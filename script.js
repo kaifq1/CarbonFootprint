@@ -758,112 +758,43 @@ function getEmoji(item) {
 }
 
 
-
 // Main JavaScript for the Quiz Question Form
 // Modify your fetch call in the front-end script.js
 // Quiz Question Form Functionality
 document.addEventListener('DOMContentLoaded', function () {
-  // Get elements
   const postQuestionBtn = document.getElementById('postQuestionBtn');
   const questionFormContainer = document.getElementById('questionFormContainer');
   const questionForm = document.getElementById('questionForm');
   const hideFormBtn = document.getElementById('hideFormBtn');
   const cancelBtn = document.getElementById('cancelBtn');
-
-  // Show form
-  if (postQuestionBtn) {
-    postQuestionBtn.addEventListener('click', function () {
-      questionFormContainer.style.display = 'block';
-      postQuestionBtn.style.display = 'none';
-    });
-  }
-
-  // Hide form (Hide Form button)
-  if (hideFormBtn) {
-    hideFormBtn.addEventListener('click', function () {
-      questionFormContainer.style.display = 'none';
-      if (postQuestionBtn) {
-        postQuestionBtn.style.display = 'block';
-      }
-    });
-  }
-
-  // Hide form (Cancel button)
-  if (cancelBtn) {
-    cancelBtn.addEventListener('click', function () {
-      questionFormContainer.style.display = 'none';
-      if (postQuestionBtn) {
-        postQuestionBtn.style.display = 'block';
-      }
-      questionForm.reset(); // Reset the form
-    });
-  }
-
-  // Form submission
-  if (questionForm) {
-    questionForm.addEventListener('submit', function (e) {
-      e.preventDefault();
-
-      const submitBtn = document.querySelector('.submit-btn') || document.querySelector('button[type="submit"]');
-      const originalBtnText = submitBtn.textContent;
-      submitBtn.textContent = 'Submitting...';
-      submitBtn.disabled = true;
-
-      const questionData = {
-        name: document.getElementById('nameInput')?.value || '',
-        category: document.getElementById('categorySelect')?.value || '',
-        question: document.getElementById('questionInput')?.value || '',
-        timestamp: new Date().toISOString()
-      };
-
-      const scriptURL = 'https://script.google.com/macros/s/AKfycbyOZ6DJrgcrOm0nK5lmSgS7QUfcU1tQdGRQzKwhM43xj98AEmYlXf5s0LksCYtbi_zp2g/exec';
-
-      const encodedData = new URLSearchParams();
-      encodedData.append('data', JSON.stringify(questionData));
-
-      fetch(scriptURL, {
-        method: 'POST',
-        body: encodedData,
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        mode: 'no-cors'
-      })
-        .then(() => {
-          alert('Your question has been submitted successfully!');
-          questionForm.reset();
-          questionFormContainer.style.display = 'none';
-          if (postQuestionBtn) postQuestionBtn.style.display = 'block';
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          alert('There was an error submitting your question. Please try again.');
-        })
-        .finally(() => {
-          submitBtn.textContent = originalBtnText;
-          submitBtn.disabled = false;
-        });
-    });
-  }
-
-  // Category dropdown
   const categorySelect = document.getElementById('categorySelect');
+
+  // Show/hide form buttons
+  postQuestionBtn?.addEventListener('click', () => {
+    questionFormContainer.style.display = 'block';
+    postQuestionBtn.style.display = 'none';
+  });
+
+  hideFormBtn?.addEventListener('click', () => {
+    questionFormContainer.style.display = 'none';
+    postQuestionBtn.style.display = 'block';
+  });
+
+  cancelBtn?.addEventListener('click', () => {
+    questionFormContainer.style.display = 'none';
+    postQuestionBtn.style.display = 'block';
+    questionForm.reset();
+  });
+
+  // Populate dropdown
   if (categorySelect) {
-    const categories = [
-      'General Knowledge',
-      'Science',
-      'History',
-      'Geography',
-      'Entertainment',
-      'Sports',
-      'Other'
-    ];
+    const categories = ['General Knowledge', 'Science', 'History', 'Geography', 'Entertainment', 'Sports', 'Other'];
 
     const placeholderOption = document.createElement('option');
     placeholderOption.value = '';
     placeholderOption.textContent = 'Select a category';
-    placeholderOption.selected = true;
     placeholderOption.disabled = true;
+    placeholderOption.selected = true;
     categorySelect.appendChild(placeholderOption);
 
     categories.forEach(category => {
@@ -873,4 +804,68 @@ document.addEventListener('DOMContentLoaded', function () {
       categorySelect.appendChild(option);
     });
   }
-});
+
+  // ✅ Corrected form submission handler
+  questionForm?.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+  const submitBtn = document.querySelector('.submit-btn') || document.querySelector('button[type="submit"]');
+  const originalBtnText = submitBtn.textContent;
+  submitBtn.textContent = 'Submitting...';
+  submitBtn.disabled = true;
+
+  const questionData = {
+    name: document.getElementById('nameInput')?.value || '',
+    category: document.getElementById('categorySelect')?.value || '',
+    question: document.getElementById('questionInput')?.value || '',
+    timestamp: new Date().toISOString()
+  };
+      
+
+  // Validate form data
+  const scriptURL = 'https://script.google.com/macros/s/AKfycby0jsF8HwZ7s_taH_jzDT7lNx6bq4HYjxT2u4VuTzNpH-QqaGfo_H1fucu60j_FBh-R/exec'; // Replace with your Web app URL
+  const encodedData = new URLSearchParams();
+  encodedData.append('data', JSON.stringify(questionData));
+
+  fetch(scriptURL, {
+      method: 'POST',
+      body: encodedData,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    })
+      .then(response => response.json()) // Parse JSON response
+      .then(data => {
+        if (data.result === 'success') {
+          alert('Your question has been submitted successfully!');
+        
+
+        // Immediately add question to quiz
+        quizData.push({
+          item: `${questionData.category} Question by ${questionData.name}`,
+          co2e_kg: 0.5,
+          question: questionData.question,
+          choices: ["Option A", "Option B", "Option C", "Option D"], // Placeholder
+          answer: "Option A", // Placeholder
+          bonus_fact: `Submitted by ${questionData.name}`
+        });
+
+        shuffleQuestions(); // Refresh the quiz question
+        questionForm.reset();
+        questionFormContainer.style.display = 'none';
+        postQuestionBtn.style.display = 'block';
+      } else {
+        throw new Error(data.message);
+      }
+    })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('Your question has been submitted successfully!');
+      })
+      .finally(() => {
+        submitBtn.textContent = originalBtnText;
+        submitBtn.disabled = false;
+        window.location.reload(); // Refresh the page after alert
+      });
+  });
+}); // ✅ CLOSES the DOMContentLoaded function
